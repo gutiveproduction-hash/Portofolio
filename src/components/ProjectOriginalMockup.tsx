@@ -514,6 +514,409 @@ export const ProjectOriginalMockup: React.FC<ProjectOriginalMockupProps> = ({ pr
     );
   }
 
+  // 7. X-FRONTIER (AI Strategy & Ideation Engine)
+  if (projectId === 'x-frontier') {
+    return (
+      <div className="w-full h-full bg-[#050608] text-white flex flex-col select-none overflow-hidden font-sans border-b border-white/10">
+        {/* ===== TOP NAV ===== */}
+        <div className="px-1.5 py-1 border-b border-white/10 flex items-center justify-between gap-1 flex-shrink-0">
+          <div className="flex items-center gap-1 min-w-0">
+            <div className="w-3.5 h-3.5 rounded-full bg-[#12203a] border border-[#2563eb]/50 flex items-center justify-center text-[6px] text-[#3b82f6] flex-shrink-0">
+              &#9678;
+            </div>
+            <div className="min-w-0">
+              <div className="flex items-center gap-1">
+                <span className="font-extrabold text-white text-[6.5px] tracking-tight">X-VISION</span>
+                <span className="font-extrabold text-[#3b82f6] text-[6.5px] tracking-tight">FRONTIER</span>
+                <span className="px-0.5 rounded-full bg-[#2563eb] text-white text-[3.5px] font-bold whitespace-nowrap">BENTO FRONTIER</span>
+              </div>
+              <div className="text-[3.5px] text-white/35 tracking-[0.12em] uppercase truncate">
+                First Principles Software &#8226; Deeptech Markets
+              </div>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-0.5 flex-shrink-0">
+            <span className="px-1 py-0.5 rounded-full bg-[#2563eb] text-white text-[4px] font-bold whitespace-nowrap">X-Vision</span>
+            <span className="px-1 py-0.5 rounded-full text-white/45 text-[4px] whitespace-nowrap hidden sm:inline">Pitch Evaluator</span>
+            <span className="px-1 py-0.5 rounded-full text-white/45 text-[4px] whitespace-nowrap hidden sm:inline">Synthesizer</span>
+            <span className="px-1 py-0.5 rounded-full text-white/45 text-[4px] whitespace-nowrap hidden sm:inline">Tech Tree &amp; TAM</span>
+            <span className="px-1 py-0.5 rounded-full text-white/45 text-[4px] whitespace-nowrap">Ask Elon</span>
+          </div>
+        </div>
+
+        {/* ===== BENTO GRID ===== */}
+        <div className="flex-1 p-1.5 flex flex-col gap-1 overflow-hidden">
+          {/* Row 1 */}
+          <div className="grid grid-cols-[1.55fr_0.75fr_0.75fr] gap-1 flex-[1.35] min-h-0">
+            {/* Hero card */}
+            <div className="rounded-lg bg-[#0c0e12] border border-white/10 p-1.5 flex flex-col justify-between overflow-hidden">
+              <div>
+                <div className="flex items-center gap-1 mb-1">
+                  <span className="px-1 py-0.3 rounded bg-[#2563eb] text-white text-[3.5px] font-bold">PRIORITY ALPHA</span>
+                  <span className="text-[3.5px] text-white/35 tracking-[0.12em] uppercase">Frontier Horizon</span>
+                </div>
+                <div className="text-[9px] font-black leading-[1.1] text-white">SaaS Konvensional Akan Mati.</div>
+                <div className="text-[9px] font-black leading-[1.1] text-[#3b82f6] mb-1">
+                  Software Frontier Mengatur Atom &amp; Energi.
+                </div>
+                <div className="text-[4px] text-white/45 leading-snug">
+                  Software bukan lagi sekadar formulir database atau bot perantara CRUD. Ledakan nilai ekonomi terjadi di persimpangan{' '}
+                  <span className="text-white/75 font-semibold">Physical AI</span>,{' '}
+                  <span className="text-white/75 font-semibold">Arbitrase Energi Grid</span>, dan{' '}
+                  <span className="text-white/75 font-semibold">Komputasi Orbital LEO</span>.
+                </div>
+              </div>
+
+              <div className="pt-1 border-t border-white/10 flex items-center justify-between gap-1">
+                <div className="flex items-center gap-1 min-w-0">
+                  <span className="w-2 h-2 rounded-full bg-[#12203a] border border-[#2563eb]/60 flex-shrink-0" />
+                  <span className="text-[4px] text-[#3b82f6] font-mono-code truncate">&lt; 0.04ms Actuator Latency</span>
+                </div>
+                <span className="text-[3.5px] text-white/30 tracking-[0.1em] font-mono-code whitespace-nowrap flex-shrink-0">
+                  STARBASE VERIFIED
+                </span>
+              </div>
+            </div>
+
+            {/* Blue TAM card */}
+            <div className="rounded-lg bg-[#2554eb] p-1.5 flex flex-col items-center justify-center text-center overflow-hidden">
+              <span className="text-[13px] font-black italic text-white leading-none">$14.2T</span>
+              <span className="text-[4px] font-bold text-white tracking-[0.1em] mt-0.5">EST. DEEPTECH TAM</span>
+              <div className="w-full border-t border-white/25 my-1" />
+              <span className="text-[3.5px] text-white/80 font-mono-code leading-tight">Physical AI + Grid VPP Arbitrage</span>
+            </div>
+
+            {/* Optimus card */}
+            <div className="rounded-lg bg-[#0c0e12] border border-white/10 p-1.5 flex flex-col items-center justify-center text-center overflow-hidden">
+              <div className="w-4 h-4 rounded bg-[#15181d] border border-white/10 flex items-center justify-center text-[8px] mb-1">
+                &#129302;
+              </div>
+              <span className="text-[5px] font-bold text-white leading-tight">OPTIMUS-FLEET OS</span>
+              <span className="text-[3.5px] text-white/40 tracking-[0.1em] uppercase">Mass Fleet Deployment</span>
+              <span className="mt-1 px-1 py-0.3 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-[3.5px] font-bold">
+                Deployment Phase 2
+              </span>
+            </div>
+          </div>
+
+          {/* Row 2 */}
+          <div className="grid grid-cols-[1fr_1.15fr] gap-1 flex-1 min-h-0">
+            {/* White manifesto card */}
+            <div className="rounded-lg bg-[#f5f5f3] text-[#0c0e12] p-1.5 flex flex-col justify-center overflow-hidden">
+              <span className="text-[3.5px] text-neutral-500 tracking-[0.12em] uppercase font-mono-code">First Principles Manifesto</span>
+              <div className="flex items-start justify-between gap-1 mt-0.5">
+                <div className="min-w-0">
+                  <div className="text-[6px] font-black leading-tight">
+                    "Jangan Mengoptimalkan Hal yang Seharusnya Dihapus."
+                  </div>
+                  <div className="text-[3.5px] text-neutral-500 leading-snug mt-0.5">
+                    Setiap baris kode harus dijustifikasi oleh hukum termodinamika.
+                  </div>
+                </div>
+                <span className="px-1 py-0.5 rounded bg-[#0c0e12] text-white text-[3.5px] font-bold whitespace-nowrap flex-shrink-0 font-mono-code">
+                  LAUNCH ALPHA &#8594;
+                </span>
+              </div>
+            </div>
+
+            {/* VPP Grid card */}
+            <div className="rounded-lg bg-[#0c0e12] border border-white/10 p-1.5 flex flex-col justify-center overflow-hidden">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-[4.5px] font-bold text-white tracking-wide truncate">&#9889; VPP GRID POWER ARBITRAGE</span>
+                <span className="px-1 py-0.3 rounded bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[3.5px] font-mono-code flex-shrink-0">
+                  Live Feed
+                </span>
+              </div>
+
+              <div className="flex items-center justify-between text-[3.5px] font-mono-code">
+                <span className="text-white/70">Megapack Cluster Sync</span>
+                <span className="text-emerald-400 font-bold">88%</span>
+              </div>
+              <div className="h-[2px] rounded-full bg-white/10 overflow-hidden mb-1 mt-0.5">
+                <div className="h-full w-[88%] bg-emerald-400" />
+              </div>
+
+              <div className="flex items-center justify-between text-[3.5px] font-mono-code">
+                <span className="text-white/70">EV Fleet V2G Reserve</span>
+                <span className="text-[#3b82f6] font-bold">64%</span>
+              </div>
+              <div className="h-[2px] rounded-full bg-white/10 overflow-hidden mt-0.5">
+                <div className="h-full w-[64%] bg-[#3b82f6]" />
+              </div>
+
+              <div className="text-[3.5px] text-white/35 font-mono-code leading-tight mt-1 truncate">
+                Arbitrase daya 250MW via Starlink mesh routing.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // 8. LUMINAL (Enterprise Agent Control Plane)
+  if (projectId === 'luminal') {
+    return (
+      <div className="w-full h-full bg-[#080808] text-[#D1D1D1] flex select-none overflow-hidden font-sans border-b border-white/10">
+        {/* ===== SIDEBAR ===== */}
+        <div className="w-[76px] sm:w-[86px] bg-[#0a0a0a] border-r border-white/10 flex flex-col justify-between flex-shrink-0">
+          <div>
+            {/* Logo block */}
+            <div className="px-1.5 py-1.5 border-b border-white/10">
+              <div className="flex items-center gap-1">
+                <div className="w-3.5 h-3.5 rounded bg-[#C5A059]/15 border border-[#C5A059]/40 flex items-center justify-center text-[6px] text-[#C5A059] flex-shrink-0">
+                  &#9672;
+                </div>
+                <span className="text-white font-bold text-[6.5px] tracking-[0.14em]">LUMINAL</span>
+                <span className="px-0.5 rounded bg-[#C5A059]/15 border border-[#C5A059]/40 text-[#C5A059] text-[3.5px] font-bold">V2.4</span>
+              </div>
+              <div className="text-[3.5px] text-white/35 tracking-[0.16em] uppercase mt-0.5 ml-4.5">Agent Control Plane</div>
+            </div>
+
+            {/* Nav */}
+            <div className="p-1.5 space-y-[3px]">
+              <div className="text-[3.5px] text-white/30 font-bold tracking-[0.12em] uppercase">Utama</div>
+              <div className="px-1 py-0.5 rounded border border-[#C5A059]/40 bg-[#C5A059]/10 text-[#C5A059] text-[4.5px] font-bold truncate">
+                Ikhtisar Postur
+              </div>
+
+              <div className="text-[3.5px] text-white/30 font-bold tracking-[0.12em] uppercase pt-0.5">Temukan</div>
+              <div className="flex items-center justify-between gap-0.5 text-[4.5px] text-white/55">
+                <span className="truncate">Registri &amp; Topologi</span>
+                <span className="px-0.5 rounded bg-white/10 text-white/40 text-[3.5px] flex-shrink-0">9</span>
+              </div>
+
+              <div className="text-[3.5px] text-white/30 font-bold tracking-[0.12em] uppercase pt-0.5">Kendalikan</div>
+              <div className="flex items-center justify-between gap-0.5 text-[4.5px] text-white/55">
+                <span className="truncate">Otorisasi Runtime</span>
+                <span className="px-0.5 rounded bg-[#C5A059]/15 text-[#C5A059] text-[3.5px] flex-shrink-0">2</span>
+              </div>
+              <div className="flex items-center justify-between gap-0.5 text-[4.5px] text-white/55">
+                <span className="truncate">Studio Kebijakan</span>
+                <span className="px-0.5 rounded bg-white/10 text-white/40 text-[3.5px] flex-shrink-0">7</span>
+              </div>
+              <div className="flex items-center justify-between gap-0.5 text-[4.5px] text-white/55">
+                <span className="truncate">Deteksi &amp; Respons</span>
+                <span className="px-0.5 rounded bg-red-500/20 text-red-400 text-[3.5px] flex-shrink-0">3</span>
+              </div>
+
+              <div className="text-[3.5px] text-white/30 font-bold tracking-[0.12em] uppercase pt-0.5">Tata Kelola</div>
+              <div className="flex items-center justify-between gap-0.5 text-[4.5px] text-white/55">
+                <span className="truncate">Kewajiban &amp; Bukti</span>
+                <span className="px-0.5 rounded bg-[#C5A059]/15 text-[#C5A059] text-[3.5px] flex-shrink-0">PADK</span>
+              </div>
+              <div className="flex items-center justify-between gap-0.5 text-[4.5px] text-white/55">
+                <span className="truncate">Titik Penegakan</span>
+                <span className="px-0.5 rounded bg-white/10 text-white/40 text-[3.5px] flex-shrink-0">8</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Environment panel */}
+          <div className="m-1.5 p-1 rounded border border-white/10 bg-[#0c0c0c]">
+            <div className="flex items-center justify-between text-[3.5px] mb-0.5">
+              <span className="text-white/35 tracking-wider uppercase">Lingkungan</span>
+              <span className="text-emerald-400">&#9679; id-jkt-1</span>
+            </div>
+            <div className="flex items-center justify-between text-[4px]">
+              <span className="text-white/55 truncate">Enforcer Cluster</span>
+              <span className="text-white/40 flex-shrink-0">99.99% Up</span>
+            </div>
+            <div className="flex items-center justify-between text-[4px]">
+              <span className="text-white/55 truncate">Latency Otorisasi</span>
+              <span className="text-[#C5A059] font-bold flex-shrink-0">1.8 ms</span>
+            </div>
+          </div>
+        </div>
+
+        {/* ===== MAIN ===== */}
+        <div className="flex-1 flex flex-col overflow-hidden">
+          {/* Top bar */}
+          <div className="px-1.5 py-1 border-b border-white/10 flex items-center justify-between gap-1">
+            <div className="min-w-0">
+              <div className="flex items-center gap-1">
+                <span className="w-1 h-1 rounded-full bg-emerald-400 flex-shrink-0" />
+                <span className="text-emerald-400 text-[4px] font-bold tracking-[0.1em]">LIVE ENFORCING</span>
+                <span className="text-white/30 text-[4px] truncate">/ PT Sinar Penda&#8230;</span>
+                <span className="px-0.5 rounded border border-[#C5A059]/40 text-[#C5A059] text-[3.5px] font-bold flex-shrink-0">
+                  LPBBTI BERIZIN
+                </span>
+              </div>
+              <div className="text-white font-bold text-[6.5px] truncate leading-tight mt-0.5">
+                Konsol Kendali Otorisasi &amp; Kepatuhan Regulator
+              </div>
+            </div>
+            <div className="flex items-center gap-1 flex-shrink-0">
+              <span className="px-1 py-0.5 rounded border border-[#C5A059]/40 text-[#C5A059] text-[4px] font-bold whitespace-nowrap">
+                2 PERSETUJUAN
+              </span>
+              <span className="px-1 py-0.5 rounded border border-red-500/40 bg-red-500/10 text-red-400 text-[4px] font-bold whitespace-nowrap">
+                HENTIKAN DARURAT
+              </span>
+            </div>
+          </div>
+
+          {/* Body */}
+          <div className="p-1.5 flex flex-col gap-1 flex-1 overflow-hidden">
+            <div className="flex items-center justify-between">
+              <span className="text-[4px] text-white/40 font-bold uppercase tracking-[0.1em]">Tiga Pilar Arsitektur Kendali Agent</span>
+              <span className="text-[3.5px] text-white/25 uppercase tracking-[0.1em]">Standar Sektoral</span>
+            </div>
+
+            {/* 3 pillars */}
+            <div className="grid grid-cols-3 gap-1">
+              <div className="p-1 rounded bg-[#0c0c0c] border border-white/10">
+                <div className="flex items-center justify-between gap-0.5">
+                  <span className="text-[4.5px] text-white truncate">1. Temukan</span>
+                  <span className="text-[4.5px] font-bold text-[#C5A059] flex-shrink-0">74%</span>
+                </div>
+                <div className="text-[3.5px] text-white/40 leading-tight truncate">Inventarisasi agent &amp; topologi</div>
+                <div className="h-[2px] rounded-full bg-white/10 overflow-hidden my-0.5">
+                  <div className="h-full w-[74%] bg-[#C5A059]" />
+                </div>
+                <div className="flex items-center justify-between text-[3.5px]">
+                  <span className="text-white/40 truncate">9 Agent</span>
+                  <span className="text-[#C5A059] flex-shrink-0">1 Shadow &#8594;</span>
+                </div>
+              </div>
+
+              <div className="p-1 rounded bg-[#0c0c0c] border border-white/10">
+                <div className="flex items-center justify-between gap-0.5">
+                  <span className="text-[4.5px] text-white truncate">2. Kendalikan</span>
+                  <span className="text-[4.5px] font-bold text-red-400 flex-shrink-0">41%</span>
+                </div>
+                <div className="text-[3.5px] text-white/40 leading-tight truncate">Otorisasi per tindakan</div>
+                <div className="h-[2px] rounded-full bg-white/10 overflow-hidden my-0.5">
+                  <div className="h-full w-[41%] bg-red-400" />
+                </div>
+                <div className="flex items-center justify-between text-[3.5px]">
+                  <span className="text-white/40 truncate">7 Kebijakan</span>
+                  <span className="text-red-400 flex-shrink-0">11 Hak &#8594;</span>
+                </div>
+              </div>
+
+              <div className="p-1 rounded bg-[#0c0c0c] border border-white/10">
+                <div className="flex items-center justify-between gap-0.5">
+                  <span className="text-[4.5px] text-white truncate">3. Tata Kelola</span>
+                  <span className="text-[4.5px] font-bold text-emerald-400 flex-shrink-0">58%</span>
+                </div>
+                <div className="text-[3.5px] text-white/40 leading-tight truncate">Pemetaan PADK &amp; UU PDP</div>
+                <div className="h-[2px] rounded-full bg-white/10 overflow-hidden my-0.5">
+                  <div className="h-full w-[58%] bg-emerald-400" />
+                </div>
+                <div className="flex items-center justify-between text-[3.5px]">
+                  <span className="text-white/40 truncate">10 Bukti</span>
+                  <span className="text-emerald-400 flex-shrink-0">Dossier &#8594;</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Bottom: runtime table + approvals */}
+            <div className="grid grid-cols-[1.4fr_1fr] gap-1 flex-1 overflow-hidden">
+              {/* Runtime decision table */}
+              <div className="rounded bg-[#0c0c0c] border border-white/10 overflow-hidden flex flex-col">
+                <div className="px-1 py-0.5 border-b border-white/10 flex items-center justify-between">
+                  <span className="text-[4px] text-white/50 font-bold uppercase tracking-[0.08em] truncate">
+                    Aliran Putusan Otorisasi Runtime
+                  </span>
+                  <span className="text-[3.5px] text-[#C5A059] flex-shrink-0">Lengkap &#8594;</span>
+                </div>
+                <table className="w-full text-left">
+                  <thead>
+                    <tr className="text-[3.5px] text-white/30 border-b border-white/10">
+                      <th className="px-1 py-0.5 font-medium">WAKTU</th>
+                      <th className="px-1 py-0.5 font-medium">AGENT</th>
+                      <th className="px-1 py-0.5 font-medium">TINDAKAN</th>
+                      <th className="px-1 py-0.5 font-medium text-right">PUTUSAN</th>
+                    </tr>
+                  </thead>
+                  <tbody className="text-[4px]">
+                    <tr className="border-b border-white/5">
+                      <td className="px-1 py-0.5 text-white/40">16:11:22</td>
+                      <td className="px-1 py-0.5 text-white/80 truncate">Rekonsiliasi Bayar</td>
+                      <td className="px-1 py-0.5 text-white/50 truncate">pengetahuan:read</td>
+                      <td className="px-1 py-0.5 text-right">
+                        <span className="px-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 text-[3.5px] font-bold">IZINKAN</span>
+                      </td>
+                    </tr>
+                    <tr className="border-b border-white/5">
+                      <td className="px-1 py-0.5 text-white/40">16:29:56</td>
+                      <td className="px-1 py-0.5 text-white/80 truncate">Penagihan WA</td>
+                      <td className="px-1 py-0.5 text-white/50 truncate">core.nasabah:read</td>
+                      <td className="px-1 py-0.5 text-right">
+                        <span className="px-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 text-[3.5px] font-bold">IZINKAN</span>
+                      </td>
+                    </tr>
+                    <tr className="border-b border-white/5">
+                      <td className="px-1 py-0.5 text-white/40">18:42:37</td>
+                      <td className="px-1 py-0.5 text-white/80 truncate">Deteksi Fraud</td>
+                      <td className="px-1 py-0.5 text-white/50 truncate">core.nasabah:read</td>
+                      <td className="px-1 py-0.5 text-right">
+                        <span className="px-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 text-[3.5px] font-bold">IZINKAN</span>
+                      </td>
+                    </tr>
+                    <tr className="border-b border-white/5">
+                      <td className="px-1 py-0.5 text-white/40">18:46:03</td>
+                      <td className="px-1 py-0.5 text-white/80 truncate">Chatbot Nasabah</td>
+                      <td className="px-1 py-0.5 text-white/50 truncate">pesan.keluar:send</td>
+                      <td className="px-1 py-0.5 text-right">
+                        <span className="px-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 text-[3.5px] font-bold">IZINKAN</span>
+                      </td>
+                    </tr>
+                    <tr className="border-b border-white/5">
+                      <td className="px-1 py-0.5 text-white/40">19:02:34</td>
+                      <td className="px-1 py-0.5 text-white/80 truncate">Skoring Kredit</td>
+                      <td className="px-1 py-0.5 text-white/50 truncate">refund:execute</td>
+                      <td className="px-1 py-0.5 text-right">
+                        <span className="px-0.5 rounded bg-[#C5A059]/15 text-[#C5A059] border border-[#C5A059]/30 text-[3.5px] font-bold">BERTINGKAT</span>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className="px-1 py-0.5 text-white/40">19:02:33</td>
+                      <td className="px-1 py-0.5 text-white/80 truncate">Prospek Pemasaran</td>
+                      <td className="px-1 py-0.5 text-white/50 truncate">core.nasabah:read</td>
+                      <td className="px-1 py-0.5 text-right">
+                        <span className="px-0.5 rounded bg-red-500/15 text-red-400 border border-red-500/30 text-[3.5px] font-bold">TOLAK</span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Approvals panel */}
+              <div className="rounded bg-[#0c0c0c] border border-white/10 p-1 flex flex-col">
+                <div className="flex items-center justify-between mb-0.5">
+                  <span className="text-[4px] text-white/50 font-bold uppercase tracking-[0.08em] truncate">Perlu Persetujuan (2)</span>
+                  <span className="text-[3.5px] text-[#C5A059] flex-shrink-0">SLA 15&#8242;</span>
+                </div>
+                <div className="rounded border border-white/10 p-1 mb-0.5">
+                  <div className="flex items-start justify-between gap-0.5">
+                    <span className="text-[4px] text-white font-semibold leading-tight">transaksi:block (Pemblokiran Rekening)</span>
+                    <span className="px-0.5 rounded bg-[#C5A059]/15 border border-[#C5A059]/30 text-[#C5A059] text-[3.5px] font-bold whitespace-nowrap flex-shrink-0">
+                      Rp 48,9jt
+                    </span>
+                  </div>
+                  <div className="text-[3.5px] text-[#C5A059] truncate">Deteksi Fraud Lintas Transaksi (AGT-005)</div>
+                  <div className="text-[3.5px] text-white/40 leading-tight">Pola anomali penarikan tunai di 4 ATM.</div>
+                  <div className="flex items-center gap-0.5 mt-0.5">
+                    <span className="px-1 py-0.3 rounded bg-emerald-500/20 text-emerald-400 text-[3.5px] font-bold">SETUJUI</span>
+                    <span className="px-1 py-0.3 rounded border border-red-500/40 text-red-400 text-[3.5px] font-bold">TOLAK</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-0.5 text-[3.5px] text-red-400">
+                  <span className="w-1 h-1 rounded-full bg-red-400 flex-shrink-0" />
+                  <span className="font-bold">DET-02</span>
+                  <span className="text-white/40 truncate">Shadow Agent kirim data sensitif</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   // Fallback
   return null;
 };

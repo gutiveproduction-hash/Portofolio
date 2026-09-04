@@ -2,10 +2,18 @@ import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 import {defineConfig} from 'vite';
+import {viteSingleFile} from 'vite-plugin-singlefile';
 
 export default defineConfig(() => {
   return {
-    plugins: [react(), tailwindcss()],
+    plugins: [react(), tailwindcss(), viteSingleFile()],
+    build: {
+      // vite-plugin-singlefile inlines JS/CSS/assets directly into index.html,
+      // producing one fully self-contained HTML file with no separate dist assets.
+      cssCodeSplit: false,
+      assetsInlineLimit: 100000000,
+      chunkSizeWarningLimit: 100000000,
+    },
     resolve: {
       alias: {
         '@': path.resolve(__dirname, '.'),

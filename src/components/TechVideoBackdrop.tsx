@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { TechVideo } from '../types';
 import { TECH_VIDEOS } from '../data/portfolioData';
-import { Play, Pause, Video, Eye, EyeOff, Sliders, Sparkles, RefreshCw, Zap, Maximize2, Shield, Terminal } from 'lucide-react';
+import { Eye, EyeOff, Sliders, Terminal } from 'lucide-react';
 
 interface TechVideoBackdropProps {
   activeVideoId: string;
@@ -14,15 +14,10 @@ export const TechVideoBackdrop: React.FC<TechVideoBackdropProps> = ({
   onSelectVideo,
   showControls = true
 }) => {
-  const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const [isPlaying, setIsPlaying] = useState(true);
   const [dimmerLevel, setDimmerLevel] = useState<number>(0.35); // 0.15 (bright) to 0.70 (dim)
   const [showScanlines, setShowScanlines] = useState<boolean>(true);
-  const [renderMode, setRenderMode] = useState<'hybrid' | 'canvas' | 'video'>('hybrid');
   const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
-  const [videoLoaded, setVideoLoaded] = useState<boolean>(false);
-  const [videoError, setVideoError] = useState<boolean>(false);
 
   const activeVideo = TECH_VIDEOS.find(v => v.id === activeVideoId) || TECH_VIDEOS[0];
 
@@ -152,7 +147,7 @@ export const TechVideoBackdrop: React.FC<TechVideoBackdropProps> = ({
             }
           }
         }
-      } 
+      }
       // --- VISUAL SCENE B: Digital Matrix Rain & Telemetry Stream ---
       else if (isMatrix) {
         ctx.font = '12px "JetBrains Mono", monospace';
@@ -279,56 +274,13 @@ export const TechVideoBackdrop: React.FC<TechVideoBackdropProps> = ({
     };
   }, [activeVideo]);
 
-  // Video Autoplay & Fallback Management
-  useEffect(() => {
-    if (!videoRef.current) return;
-    setVideoError(false);
-    setVideoLoaded(false);
-
-    if (isPlaying && renderMode !== 'canvas') {
-      const playPromise = videoRef.current.play();
-      if (playPromise !== undefined) {
-        playPromise
-          .then(() => {
-            setVideoLoaded(true);
-          })
-          .catch(() => {
-            // In case of iframe autoplay restriction, seamlessly fallback to vibrant 60FPS procedural canvas
-            setVideoError(true);
-          });
-      }
-    } else {
-      videoRef.current.pause();
-    }
-  }, [activeVideo, isPlaying, renderMode]);
-
   return (
     <div className="fixed inset-0 w-full h-full overflow-hidden pointer-events-none select-none z-0">
-      {/* Base Canvas Cyber Engine (Runs 60FPS smoothly behind or alongside video) */}
+      {/* Cyber Canvas Engine — runs at 60FPS, fully self-contained (no external video dependency) */}
       <canvas
         ref={canvasRef}
         className="absolute inset-0 w-full h-full object-cover transition-opacity duration-700 opacity-90"
       />
-
-      {/* HTML5 Video Backdrop Layer (Rendered when available) */}
-      {renderMode !== 'canvas' && (
-        <video
-          ref={videoRef}
-          key={activeVideo.id}
-          className={`absolute inset-0 w-full h-full object-cover mix-blend-screen transition-opacity duration-700 ${
-            videoLoaded && !videoError ? 'opacity-85' : 'opacity-0'
-          }`}
-          autoPlay
-          loop
-          muted
-          playsInline
-          preload="auto"
-          onLoadedData={() => setVideoLoaded(true)}
-          onError={() => setVideoError(true)}
-        >
-          <source src={activeVideo.videoUrl} type="video/mp4" />
-        </video>
-      )}
 
       {/* Futuristic CRT Scanline Mesh */}
       {showScanlines && (
@@ -359,7 +311,7 @@ export const TechVideoBackdrop: React.FC<TechVideoBackdropProps> = ({
               id="tech-video-hud-btn"
               onClick={() => setIsSettingsOpen(!isSettingsOpen)}
               className="px-3.5 py-1.5 rounded-full bg-black/85 hover:bg-black text-xs font-mono-code text-white/90 hover:text-white border border-[#39FF14]/50 hover:border-[#39FF14] backdrop-blur-xl flex items-center gap-2 transition-all shadow-[0_0_15px_rgba(57,255,20,0.15)] cursor-pointer"
-              title="Tech Video & Cyber Canvas Controls"
+              title="Cyber Canvas Controls"
             >
               <span className="w-2.5 h-2.5 rounded-full bg-[#39FF14] animate-neon-pulse" />
               <span className="text-white/60 hidden sm:inline">SCENE:</span>
@@ -369,7 +321,7 @@ export const TechVideoBackdrop: React.FC<TechVideoBackdropProps> = ({
 
             {/* Expanded HUD Settings Panel */}
             {isSettingsOpen && (
-              <div 
+              <div
                 id="tech-video-hud-panel"
                 className="absolute right-0 mt-2 w-80 sm:w-96 rounded-2xl bg-[#0a0a0a]/95 border border-[#39FF14]/40 p-4 sm:p-5 shadow-2xl backdrop-blur-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-200"
               >
@@ -439,7 +391,7 @@ export const TechVideoBackdrop: React.FC<TechVideoBackdropProps> = ({
                   </div>
                 </div>
 
-                {/* 3. Toggles & Render Mode */}
+                {/* 3. Toggles */}
                 <div className="grid grid-cols-2 gap-2 pt-2 border-t border-white/10">
                   <button
                     onClick={() => setShowScanlines(!showScanlines)}
@@ -453,19 +405,12 @@ export const TechVideoBackdrop: React.FC<TechVideoBackdropProps> = ({
                     <span>CRT Scanlines</span>
                   </button>
 
-                  <button
-                    onClick={() => {
-                      setRenderMode(prev => prev === 'hybrid' ? 'canvas' : 'hybrid');
-                    }}
-                    className={`px-3 py-2 rounded-xl text-xs font-mono-code transition flex items-center justify-center gap-1.5 border cursor-pointer ${
-                      renderMode === 'hybrid'
-                        ? 'bg-blue-500/15 border-blue-500/50 text-blue-400'
-                        : 'bg-emerald-500/15 border-emerald-500/50 text-emerald-300'
-                    }`}
+                  <div
+                    className="px-3 py-2 rounded-xl text-xs font-mono-code flex items-center justify-center gap-1.5 border bg-[#39FF14]/10 border-[#39FF14]/40 text-[#39FF14]"
                   >
-                    <Zap size={12} />
-                    <span>{renderMode === 'hybrid' ? 'Hybrid Mode' : 'Pure Canvas'}</span>
-                  </button>
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#39FF14] animate-pulse" />
+                    <span>Canvas Engine Live</span>
+                  </div>
                 </div>
               </div>
             )}
