@@ -911,6 +911,10 @@ export const ProjectPreviewMockup: React.FC<ProjectPreviewMockupProps> = ({
     );
   }
 
-  // Fallback
-  return null;
+  // Projects without a bespoke simulator show their cover instead of nothing.
+  return (
+    <div className="w-full aspect-[16/9] rounded-2xl border border-white/10 overflow-hidden bg-black">
+      <img src={project.thumbUrl} alt={project.title} className="w-full h-full object-cover" />
+    </div>
+  );
 };

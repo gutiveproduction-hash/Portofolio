@@ -1,5 +1,15 @@
 @import "tailwindcss";
 
+/* shadcn-style colour tokens (bg-background, text-muted-foreground, ...) used by
+   components in src/components/ui. The site is dark-only, so one set of values. */
+@theme {
+  --color-background: #000000;
+  --color-foreground: #ffffff;
+  --color-muted: #0b0d10;
+  --color-muted-foreground: rgb(255 255 255 / 0.5);
+  --color-accent: #39ff14;
+}
+
 @layer base {
   * {
     box-sizing: border-box;

@@ -239,6 +239,136 @@ export const PROJECTS_DATA: Project[] = [
     year: '2026',
     client: 'Personal R&D'
   },
+  {
+    id: 'kremos',
+    title: 'KREMOS — Creator Business OS',
+    subtitle: 'Offline desktop suite for running a content creator & KOL business.',
+    category: 'enterprise',
+    role: 'DESKTOP APP & CREATOR OPERATIONS',
+    desc: 'A desktop business suite for content creators and KOLs — brand-deal pipeline, contracts, invoicing, content planning, and comment moderation in one offline app.',
+    fullDesc: 'KREMOS gives creators and KOLs a single place to run the business side of their work. Brand deals move through a six-stage kanban from rate negotiation to paid, each with its PIC contact, deliverable checklist, revision log and video preview link. Invoices come with WhatsApp reminder templates for late payments and a rate-card calculator, while the content planner tracks organic and sponsored posts by production status. Everything is stored locally on the device, with no server or online account.',
+    metrics: [
+      '6-stage drag & drop deal pipeline',
+      '100% local data, no account needed',
+      'macOS & Windows builds'
+    ],
+    keyFeatures: [
+      'Brand deal kanban (Nego Rate → Lunas) with drag & drop and per-deal deliverable checklists',
+      'PIC contacts with one-tap WhatsApp and per-deal revision log',
+      'Invoice list with WhatsApp reminder templates and a rate-card calculator',
+      'Content planner for organic and sponsored posts by production status',
+      'Comment moderation queue with keyword blacklist, plus a searchable offline FAQ bot'
+    ],
+    tags: ['React', 'TypeScript', 'Electron', 'Tailwind CSS'],
+    thumbUrl: '/previews/kremos.webp',
+    architectureDetails: 'React and TypeScript on Vite, packaged as a native desktop app with Electron and electron-builder for macOS and Windows. All data lives in local storage inside the Electron shell, so the app works fully offline with no backend.',
+    year: '2026',
+    client: 'Creators & KOLs'
+  },
+  {
+    id: 'finora',
+    title: 'Finora — Net Worth & Portfolio Tracker',
+    subtitle: 'Open-source, fully offline personal finance and investment tracker.',
+    category: 'enterprise',
+    role: 'OPEN-SOURCE DESKTOP FINANCE APP',
+    desc: 'A free, open-source desktop app for tracking cash flow, budgets, investments and net worth — 100% offline, with data kept in a local SQLite database.',
+    fullDesc: 'Finora is a private alternative to subscription finance apps. It tracks income and expenses across bank accounts, e-wallets and cash, compares spending to monthly budgets, and follows holdings across stocks, mutual funds (reksadana), crypto, bonds and property with cost basis and gain/loss. Cash, investments and liabilities roll up into a single net worth figure charted over time. It is multi-currency with IDR as the base, imports bank CSVs through a column-mapping step, and never sends data anywhere: there is no server, account or telemetry.',
+    metrics: [
+      'Zero network calls by design',
+      'Stocks, reksadana, crypto, bonds & property',
+      'macOS .dmg & Windows installers'
+    ],
+    keyFeatures: [
+      'Cash flow and per-category monthly budgets with actual vs. budget',
+      'Investment portfolio with cost basis, market value and gain/loss per asset',
+      'Net worth history combining assets and liabilities',
+      'Multi-currency with IDR base and editable exchange rates',
+      'CSV import with column mapping, plus JSON backup & restore'
+    ],
+    tags: ['React', 'TypeScript', 'Electron', 'SQLite', 'Drizzle ORM'],
+    thumbUrl: '/previews/finora.webp',
+    architectureDetails: 'Electron desktop app with a React + TypeScript renderer, Zustand for state and Recharts for charts. Data is persisted in a local SQLite database through better-sqlite3 and Drizzle ORM, with no network layer at all.',
+    year: '2026',
+    client: 'Open Source'
+  },
+  {
+    id: 'kastara',
+    title: 'KASTARA — DHE SDA Treasury & Compliance',
+    subtitle: 'Treasury and compliance tracking for natural-resource export proceeds (DHE SDA).',
+    category: 'enterprise',
+    role: 'ENTERPRISE TREASURY & REGTECH',
+    desc: 'An enterprise treasury tool that tracks mandatory DHE SDA placement obligations, projects when funds unlock, and compares banking instruments for yield.',
+    fullDesc: 'Indonesian natural-resource exporters must place their export proceeds (DHE SDA) in domestic banks under PP 36/2023, PP 8/2025 and PP 21/2026. KASTARA keeps a ledger of export declarations (PEB), tracks each required placement against its rules, shows when placed funds unlock on a calendar so treasury can project liquidity, and compares eligible banking instruments to optimise yield. Regulatory parameters are configurable as the rules change.',
+    metrics: [
+      'Mapped to PP 36/2023, PP 8/2025 & PP 21/2026',
+      'PEB ledger to placement tracking',
+      'Unlock calendar & liquidity projection'
+    ],
+    keyFeatures: [
+      'Compliance dashboard for outstanding and fulfilled placement obligations',
+      'PEB (export declaration) ledger linked to required placements',
+      'Unlock calendar projecting when placed funds become available',
+      'Yield optimizer comparing eligible banking instruments',
+      'Configurable regulatory settings for changing placement rules'
+    ],
+    tags: ['React', 'TypeScript', 'Tailwind CSS', 'Google Gemini API'],
+    thumbUrl: '/previews/kastara.webp',
+    architectureDetails: 'React and TypeScript on Vite with Tailwind CSS and Motion, with a small Express server calling Google\'s Gemini API server-side. Views are split by treasury task: dashboard, PEB ledger, placements, unlock calendar, yield optimizer and regulatory settings.',
+    year: '2026',
+    client: 'Commodity Exporters'
+  },
+  {
+    id: 'cctv-ai-overlay',
+    title: 'CCTV AI Overlay',
+    subtitle: 'Computer-vision overlay for a phone repair shop\'s CCTV feed.',
+    category: 'ai',
+    role: 'COMPUTER VISION PROTOTYPE',
+    desc: 'An AI overlay on a repair shop\'s CCTV: customers are tracked anonymously with their wait time, while technicians are recognised by name with the number of units each one works on.',
+    fullDesc: 'A computer-vision prototype for a phone repair workshop. People detected outside the staff zone are treated as customers and tracked anonymously, with no face recognition, showing only how long they have been waiting. People inside the workbench zone are recognised against a staff photo database and labelled with the number of phones they personally worked on. It was tested end-to-end on real footage from the shop, and the annotated overlay can be streamed to a phone browser on the same Wi-Fi.',
+    metrics: [
+      'Tested on real in-shop CCTV footage',
+      'Anonymous customer wait timers',
+      'Per-technician unit attribution'
+    ],
+    keyFeatures: [
+      'YOLOv8 person and phone detection on CCTV video',
+      'Zone-based split between staff (workbench) and customers',
+      'Face recognition for staff only; customers stay anonymous',
+      'Per-person unit counting, attributed only inside the staff zone',
+      'Live overlay stream to a phone browser over local Wi-Fi'
+    ],
+    tags: ['Python', 'YOLOv8', 'OpenCV', 'face_recognition', 'Flask'],
+    thumbUrl: '/previews/cctv.webp',
+    architectureDetails: 'Python pipeline using Ultralytics YOLOv8 for detection and OpenCV for video I/O, with face_recognition (dlib) matching staff against a local face database. A small Flask server streams the annotated overlay to devices on the same network.',
+    year: '2026',
+    client: 'Goed Service Workshop'
+  },
+  {
+    id: 'settlement-risk-sim',
+    title: 'Payment Settlement Risk Simulator',
+    subtitle: 'Who carries the risk when merchant settlement moves to T+0?',
+    category: 'enterprise',
+    role: 'FINTECH RISK SIMULATION',
+    desc: 'A simulation that compares merchant payout policies against a synthetic merchant population with hidden fraudsters, measuring PSP losses, locked capital and payout speed.',
+    fullDesc: 'This simulator answers one concrete question: if settlement is sped up to T+0, who absorbs the risk and how much? It runs several payout policies against synthetic merchants, some of them planned bust-out fraudsters, and measures the trade-off between PSP losses, capital held in reserve and how fast honest merchants get paid. Its main finding is that T+0 is a credit decision rather than a payment-rails problem: faster payouts remove the delay that used to act as the safety net for clawing back chargebacks.',
+    metrics: [
+      '5 payout policies across 12 seeds',
+      'Strict information barrier, enforced by tests',
+      'Tail-risk (worst-case) profit reporting'
+    ],
+    keyFeatures: [
+      'Synthetic merchant generator including bust-out fraud scenarios',
+      'Information barrier: decisions only see data a PSP would realistically know that day',
+      'Tiered chargeback clawback: rolling reserve → unpaid funds → merchant → PSP loss',
+      'Multi-seed experiments with CSV output and an HTML report',
+      'Sanity tests guarding the barrier, determinism and trade-off direction'
+    ],
+    tags: ['Python', 'Simulation', 'Risk Modeling'],
+    thumbUrl: '/previews/settlement.webp',
+    architectureDetails: 'Pure Python 3.10+ standard library, with no external dependencies. The engine covers a merchant/transaction generator, an observed-view information barrier, an abstracted risk engine, a ledger, a payout scheduler and a tiered chargeback processor, driven by an experiment runner that writes CSV and HTML reports.',
+    year: '2026',
+    client: 'Personal R&D'
+  },
 ];
 
 export const SKILLS_DATA: Skill[] = [
@@ -288,7 +418,7 @@ export const SKILLS_DATA: Skill[] = [
     experience: '8+ Years',
     description: 'Scalable component design systems, state management, complex data tables, and strict type safety.',
     accentColor: '#61DAFB',
-    relatedProjects: ['Goed Acsess', 'PLN E-Procurement', 'Goed Service']
+    relatedProjects: ['Goed Acsess', 'PLN E-Procurement', 'KREMOS', 'KASTARA']
   },
   {
     id: 'electron-capacitor',
@@ -300,7 +430,7 @@ export const SKILLS_DATA: Skill[] = [
     experience: '5+ Years',
     description: 'Desktop Windows/macOS/Linux software and Android/iOS mobile native integration with hardware peripherals.',
     accentColor: '#9FEAF9',
-    relatedProjects: ['Goed Acsess (iServis Pro)']
+    relatedProjects: ['Goed Acsess (iServis Pro)', 'KREMOS', 'Finora', 'LUMINAL']
   },
   {
     id: 'claude-ai',
@@ -372,7 +502,7 @@ export const SKILLS_DATA: Skill[] = [
     experience: '6+ Years',
     description: 'Custom canvas analytics, real-time KPI graphs, burn charts, and financial analytics visualizations.',
     accentColor: '#FF6384',
-    relatedProjects: ['PLN E-Procurement', 'Goed Acsess']
+    relatedProjects: ['PLN E-Procurement', 'Finora', 'KASTARA']
   },
   {
     id: 'openwa-bot',
@@ -385,6 +515,66 @@ export const SKILLS_DATA: Skill[] = [
     description: 'Headless WhatsApp socket automation, event-driven webhooks, bulk notification systems, and customer bots.',
     accentColor: '#25D366',
     relatedProjects: ['WhatsApp Auto-Reply Bot', 'Goed Service']
+  },
+  {
+    id: 'gemini-ai',
+    name: 'Google Gemini API',
+    category: 'ai',
+    categoryLabel: 'AI & LLM Systems',
+    iconName: 'BrainCircuit',
+    level: 'Applied LLM Products',
+    experience: '4 Projects',
+    description: 'Server-side Gemini calls for idea generation, pitch evaluation, multimodal image parsing, and AI-assisted risk and compliance drafting.',
+    accentColor: '#4285F4',
+    relatedProjects: ['X-Frontier', 'LUMINAL', 'KASTARA', 'SehatLansia']
+  },
+  {
+    id: 'python-cv',
+    name: 'Python, YOLOv8 & OpenCV',
+    category: 'ai',
+    categoryLabel: 'Computer Vision',
+    iconName: 'Cctv',
+    level: 'Vision Pipelines',
+    experience: 'Tested on Real CCTV',
+    description: 'Person and object detection with YOLOv8, zone-based staff/customer tracking, dlib face recognition, and live overlays streamed with Flask.',
+    accentColor: '#A855F7',
+    relatedProjects: ['CCTV AI Overlay']
+  },
+  {
+    id: 'sqlite-local',
+    name: 'SQLite, Drizzle & Local-First',
+    category: 'database',
+    categoryLabel: 'Offline-First Data',
+    iconName: 'HardDrive',
+    level: 'Privacy by Design',
+    experience: '2 Desktop Apps',
+    description: 'Embedded SQLite with typed Drizzle schemas, local-only storage with no server or account, and JSON backup & restore.',
+    accentColor: '#0EA5E9',
+    relatedProjects: ['Finora', 'KREMOS']
+  },
+  {
+    id: 'python-simulation',
+    name: 'Python Simulation & Risk',
+    category: 'backend',
+    categoryLabel: 'Data & Simulation',
+    iconName: 'FlaskConical',
+    level: 'Fintech Risk Modeling',
+    experience: '5 Policies × 12 Seeds',
+    description: 'Multi-seed simulations over synthetic merchants, information-barrier tests against look-ahead bias, and CSV/HTML reporting in pure standard-library Python.',
+    accentColor: '#FACC15',
+    relatedProjects: ['Payment Settlement Risk Simulator']
+  },
+  {
+    id: 'regtech',
+    name: 'RegTech & Compliance',
+    category: 'backend',
+    categoryLabel: 'Compliance Systems',
+    iconName: 'ShieldCheck',
+    level: 'Regulator-Ready',
+    experience: '3 Projects',
+    description: 'Turning regulation (OJK PADK, UU PDP, PP 21/2026 DHE SDA) into rules engines, audit trails, and regulator-ready evidence.',
+    accentColor: '#F97316',
+    relatedProjects: ['LUMINAL', 'KASTARA', 'PLN E-Procurement']
   }
 ];
 

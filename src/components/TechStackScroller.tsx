@@ -18,10 +18,18 @@ import {
   MessageSquareCode,
   Layers,
   ArrowRight,
-  Play,
-  Pause,
-  Repeat
+  Repeat,
+  BrainCircuit,
+  Cctv,
+  HardDrive,
+  FlaskConical,
+  ShieldCheck
 } from 'lucide-react';
+
+/** Auto-scroll speed, in pixels per second. */
+const AUTO_SPEED = 40;
+/** How long auto-scroll waits after a swipe or arrow click before it resumes. */
+const RESUME_AFTER = 1800;
 
 interface TechStackScrollerProps {
   onSelectProjectTag?: (projectTitle: string) => void;
@@ -35,7 +43,16 @@ export const TechStackScroller: React.FC<TechStackScrollerProps> = ({
   const [canScrollLeft, setCanScrollLeft] = useState<boolean>(false);
   const [canScrollRight, setCanScrollRight] = useState<boolean>(true);
   const [scrollProgress, setScrollProgress] = useState<number>(0);
-  const [isAutoScroll, setIsAutoScroll] = useState<boolean>(false);
+  // Always on, with no toggle - except for readers who asked their system for
+  // less motion.
+  const [isAutoScroll] = useState<boolean>(
+    () => !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  );
+  const [isHovered, setIsHovered] = useState<boolean>(false);
+  // Timestamp until which auto-scroll holds off after a manual scroll.
+  const holdUntil = useRef<number>(0);
+  const firstCopyRef = useRef<HTMLDivElement | null>(null);
+  const secondCopyRef = useRef<HTMLDivElement | null>(null);
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [startX, setStartX] = useState<number>(0);
   const [scrollLeftState, setScrollLeftState] = useState<number>(0);
@@ -56,6 +73,11 @@ export const TechStackScroller: React.FC<TechStackScrollerProps> = ({
       case 'Container': return <Container {...props} />;
       case 'BarChart3': return <BarChart3 {...props} />;
       case 'MessageSquareCode': return <MessageSquareCode {...props} />;
+      case 'BrainCircuit': return <BrainCircuit {...props} />;
+      case 'Cctv': return <Cctv {...props} />;
+      case 'HardDrive': return <HardDrive {...props} />;
+      case 'FlaskConical': return <FlaskConical {...props} />;
+      case 'ShieldCheck': return <ShieldCheck {...props} />;
       default: return <Layers {...props} />;
     }
   };
@@ -73,10 +95,31 @@ export const TechStackScroller: React.FC<TechStackScrollerProps> = ({
     ? SKILLS_DATA
     : SKILLS_DATA.filter(s => s.category === selectedCategory);
 
+  // The strip is drawn twice back to back so auto-scroll can run forever:
+  // once it passes the start of the second copy it jumps back by one copy's
+  // width, which looks identical. A handful of cards doesn't overflow, so
+  // short categories are drawn once and don't move.
+  const isLooping = filteredSkills.length >= 4;
+
+  // Width of one copy, including the gap before the second one.
+  const loopWidth = () =>
+    firstCopyRef.current && secondCopyRef.current
+      ? secondCopyRef.current.offsetLeft - firstCopyRef.current.offsetLeft
+      : 0;
+
   // Check scroll bounds
   const updateScrollButtons = () => {
     if (!scrollContainerRef.current) return;
     const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
+    const loop = isLooping ? loopWidth() : 0;
+    if (loop > 0) {
+      // A loop has no ends: both arrows always work, and progress is measured
+      // within one copy.
+      setCanScrollLeft(true);
+      setCanScrollRight(true);
+      setScrollProgress(((scrollLeft % loop) / loop) * 100);
+      return;
+    }
     setCanScrollLeft(scrollLeft > 10);
     setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
     const maxScroll = scrollWidth - clientWidth;
@@ -92,16 +135,28 @@ export const TechStackScroller: React.FC<TechStackScrollerProps> = ({
       container.addEventListener('scroll', updateScrollButtons, { passive: true });
       return () => container.removeEventListener('scroll', updateScrollButtons);
     }
-  }, [filteredSkills]);
+  }, [filteredSkills, isLooping]);
+
+  // A new category starts from the first card.
+  useEffect(() => {
+    scrollContainerRef.current?.scrollTo({ left: 0 });
+  }, [selectedCategory]);
 
   // Smooth scroll handler
   const handleScroll = (direction: 'left' | 'right') => {
     if (!scrollContainerRef.current) return;
     const container = scrollContainerRef.current;
     const scrollAmount = container.clientWidth * 0.75;
-    const target = direction === 'left' 
-      ? container.scrollLeft - scrollAmount 
+    const loop = isLooping ? loopWidth() : 0;
+    // Stepping left from the start of a loop: jump to the same spot in the
+    // second copy first, so there is room to move left into.
+    if (loop > 0 && direction === 'left' && container.scrollLeft < scrollAmount) {
+      container.scrollLeft += loop;
+    }
+    const target = direction === 'left'
+      ? container.scrollLeft - scrollAmount
       : container.scrollLeft + scrollAmount;
+    holdUntil.current = performance.now() + RESUME_AFTER;
 
     container.scrollTo({
       left: target,
@@ -126,24 +181,44 @@ export const TechStackScroller: React.FC<TechStackScrollerProps> = ({
   };
 
   const handleMouseUpOrLeave = () => {
+    if (isDragging) holdUntil.current = performance.now() + RESUME_AFTER;
     setIsDragging(false);
   };
 
-  // Auto ticker loop when auto-scroll is enabled
+  // Auto-scroll: one rAF loop that advances a float position (scrollLeft
+  // rounds, so small steps would stall) and wraps it at one copy's width. It
+  // stands still while the reader is pointing at, dragging, or swiping the
+  // strip, and for a moment after they scroll it themselves.
   useEffect(() => {
-    if (!isAutoScroll) return;
-    const interval = setInterval(() => {
-      if (!scrollContainerRef.current) return;
-      const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
-      if (scrollLeft >= scrollWidth - clientWidth - 5) {
-        scrollContainerRef.current.scrollTo({ left: 0, behavior: 'smooth' });
-      } else {
-        scrollContainerRef.current.scrollBy({ left: 2, behavior: 'auto' });
-      }
-    }, 30);
+    if (!isAutoScroll || !isLooping) return;
+    const container = scrollContainerRef.current;
+    if (!container) return;
+    let frame = 0;
+    let last = performance.now();
+    let pos = container.scrollLeft;
 
-    return () => clearInterval(interval);
-  }, [isAutoScroll]);
+    const tick = (now: number) => {
+      frame = requestAnimationFrame(tick);
+      const dt = Math.min(now - last, 100) / 1000;
+      last = now;
+      const loop = loopWidth();
+      if (!loop) return;
+
+      const paused = isHovered || isDragging || now < holdUntil.current || document.hidden;
+      if (paused) {
+        // Follow whatever the reader did. The wrap waits until auto-scroll
+        // resumes: moving scrollLeft now would cut an arrow's smooth scroll short.
+        pos = container.scrollLeft;
+        return;
+      }
+      pos += AUTO_SPEED * dt;
+      if (pos >= loop) pos -= loop;
+      container.scrollLeft = pos;
+    };
+
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [isAutoScroll, isLooping, isHovered, isDragging, filteredSkills]);
 
   return (
     <section id="stack" className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 overflow-hidden">
@@ -161,25 +236,12 @@ export const TechStackScroller: React.FC<TechStackScrollerProps> = ({
             </span>
           </h2>
           <p className="text-white/60 text-sm sm:text-base max-w-xl mt-3 leading-relaxed">
-            Scroll horizontally to explore our core architecture stack — from Node.js, Go, and Supabase to Electron, Vision AI, and Claude LLM systems.
+            Our core architecture stack — from Node.js, Go, and Supabase to Electron, Python computer vision, and Claude & Gemini LLM systems. Hover to pause, or drag to explore.
           </p>
         </div>
 
-        {/* Navigation Controls & Auto-Scroll Toggle */}
+        {/* Navigation Controls */}
         <div className="flex items-center gap-3 self-start md:self-end">
-          {/* Infinite Marquee Toggle */}
-          <button
-            onClick={() => setIsAutoScroll(!isAutoScroll)}
-            className={`px-3 py-2 rounded-full border text-xs font-mono-code flex items-center gap-1.5 transition cursor-pointer ${
-              isAutoScroll
-                ? 'bg-[#39FF14]/15 border-[#39FF14]/50 text-[#39FF14]'
-                : 'bg-white/5 hover:bg-white/10 border-white/15 text-white/70'
-            }`}
-            title="Toggle Continuous Auto-Scrolling"
-          >
-            {isAutoScroll ? <Pause size={12} /> : <Play size={12} />}
-            <span>AUTO-SCROLL</span>
-          </button>
 
           {/* Left Arrow Button */}
           <button
@@ -246,12 +308,31 @@ export const TechStackScroller: React.FC<TechStackScrollerProps> = ({
           onMouseDown={handleMouseDown}
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUpOrLeave}
-          onMouseLeave={handleMouseUpOrLeave}
+          onMouseLeave={() => {
+            handleMouseUpOrLeave();
+            setIsHovered(false);
+          }}
+          onMouseEnter={() => setIsHovered(true)}
+          onTouchStart={() => { holdUntil.current = Infinity; }}
+          onTouchEnd={() => { holdUntil.current = performance.now() + RESUME_AFTER; }}
+          onFocus={() => setIsHovered(true)}
+          onBlur={() => setIsHovered(false)}
           className={`flex gap-5 overflow-x-auto custom-scrollbar pb-6 pt-2 select-none ${
             isDragging ? 'cursor-grabbing' : 'cursor-grab'
           }`}
-          style={{ scrollSnapType: isDragging || isAutoScroll ? 'none' : 'x mandatory' }}
+          // Snapping would fight the auto-scroll and the loop's jump back.
+          style={{ scrollSnapType: isDragging || isAutoScroll || isLooping ? 'none' : 'x mandatory' }}
         >
+          {(isLooping ? [0, 1] : [0]).map((copy) => (
+          <div
+            key={copy}
+            ref={copy === 0 ? firstCopyRef : secondCopyRef}
+            className="flex gap-5 flex-shrink-0"
+            // The second copy only exists to make the loop seamless; screen
+            // readers and the tab order should meet each card once.
+            aria-hidden={copy === 1 || undefined}
+            inert={copy === 1 || undefined}
+          >
           {filteredSkills.map((skill) => (
             <div
               key={skill.id}
@@ -317,6 +398,8 @@ export const TechStackScroller: React.FC<TechStackScrollerProps> = ({
               </div>
             </div>
           ))}
+          </div>
+          ))}
         </div>
       </div>
 
@@ -325,7 +408,7 @@ export const TechStackScroller: React.FC<TechStackScrollerProps> = ({
         <div className="flex items-center gap-2">
           <span>{filteredSkills.length} Technologies Listed</span>
           <span className="w-1 h-1 rounded-full bg-white/30" />
-          <span>Swipe or Drag to explore</span>
+          <span>{isAutoScroll && isLooping ? 'Hover to pause · Drag to explore' : 'Swipe or Drag to explore'}</span>
         </div>
 
         <div className="w-32 sm:w-48 h-1 bg-white/10 rounded-full overflow-hidden">
