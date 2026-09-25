@@ -40,6 +40,15 @@ export interface WorksWheelProps extends Omit<
   /** Called when the card at the front is clicked. A click on any other card
       turns the wheel to it instead. */
   onSelect?: (index: number) => void;
+  /** Turn the wheel with the page's own scroll instead of capturing wheel and
+      drag input: the section grows tall, the stage sticks to the viewport, and
+      scrolling through it carries the items round. Native scrolling keeps its
+      momentum, which a swipe handler never matches on a phone. @default false */
+  scrollDriven?: boolean;
+  /** Width a `preview` is laid out at before it is scaled to the card, so a
+      rendered UI keeps its layout on a small card instead of reflowing.
+      @default 400 */
+  previewWidth?: number;
 }
 
 /* Geometry. The card is measured against the stage; everything else is measured
@@ -82,6 +91,13 @@ const SETTLE = 140;
 const SETTLE_MIN = 0.1;
 /** Fraction of the remaining distance closed each frame. 1 = no smoothing. */
 const EASE = 0.12;
+/** Scroll-driven: the scroll already smooths the motion, so follow it closer. */
+const EASE_SCROLL = 0.2;
+/** Scroll-driven: page scroll per item, in small-viewport heights. */
+const SCROLL_PER_ITEM = 55;
+/** Scroll-driven: share of each item's scroll spent holding still on it, so a
+    flick that stops anywhere near an item lands the item square at the front. */
+const DWELL = 0.45;
 
 const clamp = (v: number, lo: number, hi: number) =>
   Math.min(hi, Math.max(lo, v));
@@ -90,6 +106,14 @@ const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 type Stage = { w: number; h: number };
 
 const rad = (deg: number) => (deg * Math.PI) / 180;
+
+/** Scroll position (in items) to wheel position: flat around every whole item,
+    an eased turn between them. */
+function dwell(raw: number) {
+  const n = Math.floor(raw);
+  const f = clamp((raw - n - DWELL / 2) / (1 - DWELL), 0, 1);
+  return n + f * f * (3 - 2 * f);
+}
 
 /** How far left the arc has carried something that has turned `drumDeg` off the
     front. Zero at the front, so the piece being read stays centred. */
@@ -120,9 +144,13 @@ export function WorksWheel({
   label = "Works '26",
   action = "View",
   onSelect,
+  scrollDriven = false,
+  previewWidth = 400,
   className,
+  style,
   ...props
 }: WorksWheelProps) {
+  const rootRef = React.useRef<HTMLElement>(null);
   const stageRef = React.useRef<HTMLDivElement>(null);
   const wheelRef = React.useRef<HTMLDivElement>(null);
   const cardRefs = React.useRef<(HTMLElement | null)[]>([]);
@@ -172,7 +200,7 @@ export function WorksWheel({
     const drumR = cardH * DRUM;
     // The phone card is sized for the drum; the ring built off it would run
     // past the sides, so the ring keeps to the stage instead.
-    const ringR = Math.min(cardH * RING_R, narrow ? w * 0.34 : Infinity);
+    const ringR = Math.min(cardH * RING_R, narrow ? w * 0.38 : Infinity);
     // Shrink the ring's cards until the circle reads as a closed loop rather
     // than beads on a wire, however many pieces the wheel is given.
     const ringScale = count
@@ -196,15 +224,25 @@ export function WorksWheel({
   React.useEffect(() => {
     if (!stage.h) return;
     let frame = 0;
+    // The turn last written to the DOM. A wheel at rest writes nothing, so it
+    // costs a phone nothing either.
+    let drawn = NaN;
+    const ease = reduced ? 1 : scrollDriven ? EASE_SCROLL : EASE;
+    // A wheel or a drag rolls the front face down, like a hand on a real
+    // wheel. Scroll-driven, the drum turns the other way, so the next piece
+    // rises from below with the page instead of falling against it.
+    const dir = scrollDriven ? -1 : 1;
     const { ringR, ringScale, drumR, bow } = metrics;
 
     const draw = () => {
       frame = requestAnimationFrame(draw);
       const gap = target.current - turn.current;
       if (Math.abs(gap) < 0.0005) turn.current = target.current;
-      else turn.current += gap * (reduced ? 1 : EASE);
+      else turn.current += gap * ease;
 
       const t = turn.current;
+      if (t === drawn) return;
+      drawn = t;
       const m = clamp(t, 0, 1);
       const pos = Math.max(0, t - 1);
 
@@ -217,7 +255,7 @@ export function WorksWheel({
 
       for (let i = 0; i < count; i++) {
         const d = i - pos;
-        const drumDeg = d * STEP;
+        const drumDeg = d * STEP * dir;
         const card = cardRefs.current[i];
         if (card) {
           card.style.transform = place(
@@ -246,14 +284,56 @@ export function WorksWheel({
 
     frame = requestAnimationFrame(draw);
     return () => cancelAnimationFrame(frame);
-  }, [metrics, stage.h, count, last, reduced]);
+  }, [metrics, stage.h, count, last, reduced, scrollDriven]);
 
-  const to = React.useCallback(
-    (next: number) => {
-      target.current = clamp(next, 0, last + 1);
+  /** Where the page has to be for the wheel to stand at `n`. */
+  const scrollTopFor = React.useCallback(
+    (n: number) => {
+      const el = rootRef.current;
+      if (!el) return null;
+      const box = el.getBoundingClientRect();
+      const run = box.height - window.innerHeight;
+      return window.scrollY + box.top + (n / (last + 1)) * run;
     },
     [last],
   );
+
+  const to = React.useCallback(
+    (next: number) => {
+      const n = clamp(next, 0, last + 1);
+      if (!scrollDriven) {
+        target.current = n;
+        return;
+      }
+      // The page owns the position here, so going somewhere means scrolling
+      // there; the scroll listener turns the wheel on the way.
+      const top = scrollTopFor(n);
+      if (top !== null)
+        window.scrollTo({ top, behavior: reduced ? "auto" : "smooth" });
+    },
+    [last, scrollDriven, scrollTopFor, reduced],
+  );
+
+  // Scroll-driven: read the page's progress through the section on every
+  // scroll and hand it to the draw loop as the target.
+  React.useEffect(() => {
+    if (!scrollDriven) return;
+    const el = rootRef.current;
+    if (!el) return;
+    const read = () => {
+      const box = el.getBoundingClientRect();
+      const run = box.height - window.innerHeight;
+      if (run <= 0) return;
+      target.current = dwell(clamp(-box.top / run, 0, 1) * (last + 1));
+    };
+    read();
+    window.addEventListener("scroll", read, { passive: true });
+    window.addEventListener("resize", read);
+    return () => {
+      window.removeEventListener("scroll", read);
+      window.removeEventListener("resize", read);
+    };
+  }, [scrollDriven, last]);
 
   // Where the press started and where it was last seen. The stage only captures
   // the pointer once it has moved past DRAG_SLOP: capturing on press would
@@ -282,7 +362,7 @@ export function WorksWheel({
   // either end instead of trapping the reader.
   React.useEffect(() => {
     const el = stageRef.current;
-    if (!el) return;
+    if (!el || scrollDriven) return;
     // Where the wheel stood when the current gesture began.
     let origin: number | null = null;
     const onWheel = (event: WheelEvent) => {
@@ -311,17 +391,33 @@ export function WorksWheel({
       el.removeEventListener("wheel", onWheel);
       window.clearTimeout(settling.current);
     };
-  }, [to, last]);
+  }, [to, last, scrollDriven]);
 
   return (
     <section
+      ref={rootRef}
       aria-label={label}
       className={cn(
-        "bg-background text-foreground relative h-full min-h-[24rem] w-full overflow-hidden select-none",
+        "bg-background text-foreground relative w-full select-none",
+        !scrollDriven && "h-full min-h-[24rem] overflow-hidden",
         className,
       )}
+      style={
+        scrollDriven
+          ? { height: `calc(100svh + ${count * SCROLL_PER_ITEM}svh)`, ...style }
+          : style
+      }
       {...props}
     >
+      {/* Scroll-driven, the frame sticks while the tall section scrolls past
+          behind it; otherwise it simply fills the section. */}
+      <div
+        className={
+          scrollDriven
+            ? "sticky top-0 h-[100svh] overflow-hidden"
+            : "absolute inset-0"
+        }
+      >
       <div
         ref={stageRef}
         tabIndex={0}
@@ -331,9 +427,14 @@ export function WorksWheel({
         // pan-y, not pan-x: a vertical swipe on a touch screen has to stay the
         // page's, or a wheel this tall would trap the reader. Touch turns the
         // wheel with a sideways swipe instead; a mouse drags up and down.
-        className="focus-visible:outline-foreground absolute inset-0 cursor-grab touch-pan-y outline-none focus-visible:outline-2 focus-visible:-outline-offset-4 active:cursor-grabbing"
+        // Scroll-driven, the page's scroll does all of it and drag is off.
+        className={cn(
+          "focus-visible:outline-foreground absolute inset-0 outline-none focus-visible:outline-2 focus-visible:-outline-offset-4",
+          !scrollDriven && "cursor-grab touch-pan-y active:cursor-grabbing",
+        )}
         style={{ perspective: `${metrics.depth}px` }}
         onPointerDown={(event) => {
+          if (scrollDriven) return;
           const { clientX: x, clientY: y } = event;
           drag.current = { x, y, x0: x, y0: y, moved: false };
           dragged.current = false;
@@ -359,6 +460,9 @@ export function WorksWheel({
           if (moved && target.current > 1) to(Math.round(target.current));
         }}
         onPointerCancel={() => {
+          // Scroll-driven, a cancel is just the browser taking the touch for
+          // the page scroll - nothing to settle.
+          if (!drag.current) return;
           drag.current = null;
           if (target.current > 1) to(Math.round(target.current));
         }}
@@ -407,10 +511,17 @@ export function WorksWheel({
                 >
                   <span className="bg-muted shadow-foreground/12 relative block size-full overflow-hidden rounded-lg shadow-[0_18px_40px_-18px_var(--tw-shadow-color)]">
                     {item.preview ? (
+                      // Laid out at previewWidth and scaled down to the card, so
+                      // a small card shows the same layout, just smaller.
                       <span
-                        className="pointer-events-none block size-full"
+                        className="pointer-events-none absolute top-0 left-0 block origin-top-left"
                         aria-label={item.title}
                         role="img"
+                        style={{
+                          width: previewWidth,
+                          height: previewWidth / CARD_RATIO,
+                          transform: `scale(${metrics.cardW / previewWidth})`,
+                        }}
                       >
                         {item.preview}
                       </span>
@@ -485,7 +596,10 @@ export function WorksWheel({
 
       <ol
         className={cn(
-          "text-muted-foreground absolute top-[7.5%] right-[2.5%] text-right leading-[1.75]",
+          "text-muted-foreground absolute right-[2.5%] text-right leading-[1.75]",
+          // Scroll-driven, the frame starts at the very top of the viewport,
+          // under any fixed header; keep the index below it.
+          scrollDriven ? "top-[max(7.5%,5.5rem)]" : "top-[7.5%]",
           // Too small to read or tap on a phone; swiping and tapping the
           // cards cover it there.
           metrics.narrow && "hidden",
@@ -507,6 +621,7 @@ export function WorksWheel({
           </li>
         ))}
       </ol>
+      </div>
     </section>
   );
 }
